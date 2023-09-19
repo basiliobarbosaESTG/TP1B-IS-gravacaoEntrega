@@ -1,0 +1,133 @@
+SELECT unnest(XPATH('/athletes/atlethe[@name="A Lamusi"]', xml)) AS nomeAtleta
+    FROM xmldata;
+---------------------------------------------------------------------------------------------
+SELECT unnest(xpath('/athletes/atlethe[@name="A Lamusi"]', xml)) AS nome,
+        unnest(xpath('/athletes/atlethe/sex/text()', xml)) AS sexo,
+        unnest(xpath('/athletes/atlethe/age/text()', xml)) AS idade,
+		unnest(xpath('/athletes/atlethe/@name', xml)) AS nomeAtleta
+FROM xmldata;
+---------------------------------------------------------------------------------------------
+WITH athelete_info_age AS (
+   SELECT unnest(XPATH('/athletes/atlethe/age', xml)) AS idadeAtleta
+    FROM xmldata
+), athelete_sex_info AS (
+    SELECT unnest(XPATH('/athletes/atlethe/sex', xml)) AS sexoAtleta
+     FROM xmldata
+) 
+SELECT unnest(XPATH('/athletes/atlethe/@name="A Lamusi"', xml)) AS nomeAtleta
+    FROM xmldata;
+---------------------------------------------------------------------------------------------
+WITH athelete_info_name AS (
+	SELECT unnest(XPATH('/athletes/atlethe[@name="A Lamusi"]', xml)) AS nomeAtleta
+    FROM xmldata
+)
+SELECT  CAST(XPATH(('/athletes/atlethe/@name', nomeAtleta)) AS text)::text[] AS nomeAtleta2,
+		CAST(XPATH(('/athletes/atlethe/sex/text()', nomeAtleta)) AS text)::text[] AS sexoAtleta,
+        CAST(XPATH(('/athletes/atlethe/age/text()', nomeAtleta)) AS text)::text[] AS idadeAtleta
+        FROM athelete_info_name;
+---------------------------------------------------------------------------------------------
+ESTA A DAR
+
+SELECT unnest(xpath('/athletes/atlethe[@name="A Lamusi"]/@name', xml)) AS nome,
+        unnest(xpath('/athletes/atlethe[@name="A Lamusi"]/sex/text()', xml)) AS sexo,
+        unnest(xpath('/athletes/atlethe[@name="A Lamusi"]/age/text()', xml)) AS idade
+FROM xmldata;
+---------------------------------------------------------------------------------------------
+SELECT unnest(xpath('/athletes/atlethe[@name]//*[contains(text(),"A Lamusi")]', xml)) AS nome,
+        unnest(xpath('/athletes/atlethe/sex/text()', xml)) AS sexo,
+        unnest(xpath('/athletes/atlethe/age/text()', xml)) AS idade,
+		unnest(xpath('/athletes/atlethe/@name', xml)) AS nomeAtleta
+FROM xmldata;
+---------------------------------------------------------------------------------------------
+ESTA A DAR
+
+select unnest(cast(xpath('/athletes/atlethe/competition/statsBySport/medal/text()', xml)as TEXT)::text[]) as medalhas, count(*) as contagem
+from xmldata
+group by medalhas;
+---------------------------------------------------------------------------------------------
+Esta A DAR
+
+select unnest(cast(xpath('/athletes/atlethe/sex/text()', xml)as TEXT)::text[]) as sex, count(*) as contagem
+from xmldata
+group by sex
+order by contagem asc;
+---------------------------------------------------------------------------------------------
+ESTA A DAR
+select unnest(cast(xpath('/athletes/atlethe/competition/statsBySport/sport/text()', xml)as TEXT)::text[]) as desporto, count(*) as contagem
+from xmldata
+group by desporto;
+---------------------------------------------------------------------------------------------
+Esta A DAR
+select unnest(cast(xpath('/athletes/atlethe[@name="A Lamusi"]/competition/statsBySport/sport/text()', xml)as TEXT)::text[]) as desporto
+from xmldata;
+---------------------------------------------------------------------------------------------
+select unnest(cast(xpath('/athletes/atlethe[@name="A Lamusi"]/competition/statsBySport/sport/text()', xml)as TEXT)::text[]) as desporto
+from xmldata;
+
+select  unnest(cast(xpath('/athletes/atlethe/@name', xml)as TEXT)::text[]) as nome,
+		xml,
+		unnest(cast(xpath('/athletes/atlethe/competition/statsBySport/sport/text()', xml)as TEXT)::text[]) as desporto
+from xmldata
+where xml.value('/athletes/atlethe/competition/statsBySport/sport/text()', 'varchar(max)') like 'Judo';
+---------------------------------------------------------------------------------------------
+select unnest(cast(xpath('/athletes/atlethe/sex', xml)as TEXT)::text[]) as sexo,
+		unnest(cast(xpath('/athletes/atlethe/competition/statsBySport[medal="Gold"]', xml)as TEXT)::text[]) as medalhas, count(*) as contagem
+from xmldata
+group by sexo
+order by sexo, contagem ASC;
+---------------------------------------------------------------------------------------------
+EVOLUCAO SELECT DO NOME DE TODOS OS ATLETAS DE UM DETERMINADO DESPORTO
+select unnest(cast(xpath('/athletes/atlethe[@name="A Lamusi"]/competition/statsBySport/sport/text()', xml)as TEXT)::text[]) as desporto
+from xmldata;
+
+select  unnest(cast(xpath('/athletes/atlethe/@name', xml)as TEXT)::text[]) as nome,
+		unnest(cast(xpath('/athletes/atlethe/competition/statsBySport/sport/text()', xml)as TEXT)::text[]) as desporto
+from xmldata
+where desporto like 'Judo';
+
+select  unnest(cast(xpath('/athletes/atlethe/@name', xml)as TEXT)::text[]) as nome,
+		xml
+from xmldata
+where xml.value('/athletes/atlethe/competition/statsBySport/sport/text()', xml) = Judo;
+
+select  unnest(cast(xpath('/athletes/atlethe/competition/statsBySport/sport[text()="Judo"]', xml)as TEXT)::text[]) as nome
+from xmldata
+
+
+select  unnest(cast(xpath('/athletes/atlethe/@name', xml)as TEXT)::text[]) as nome,
+		unnest(cast(xpath('/athletes/atlethe/competition/statsBySport/sport/text()', xml)as TEXT)::text[]) as desporto
+from xmldata
+where desporto = (select unnest(xpath('/athletes/atlethe/competition/statsBySport/sport[text()="Judo"]', xml)));
+
+with dados as(
+	select *, xml::xml as query_column
+	from xmldata
+)
+select 
+	xml.name
+from dados,
+	XMLTABLE
+	(
+		'/athletes/atlethe/competition/statsBySport/sport[text()="Judo"]' PASSING query_column
+		COLUMNS
+			name text path '../atlethe[@name]'
+	)xml
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
